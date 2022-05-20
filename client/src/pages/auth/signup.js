@@ -7,6 +7,7 @@ import { P } from '../../common/components/elements/Text'
 import { Layout } from '../../common/layouts/Layout'
 import { create } from 'ipfs-http-client'
 import Router from 'next/router'
+require('dotenv').config()
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
 
@@ -45,6 +46,7 @@ export default function signup() {
         }
         else {
             var request = await axios.post("http://localhost:5000/createUser", {
+                tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 username: userName,
                 email: userEmail,
                 password: userPassword,

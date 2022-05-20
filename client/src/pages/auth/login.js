@@ -6,6 +6,7 @@ import { Button } from '../../common/components/elements/button'
 import Router from 'next/router'
 import { P } from '../../common/components/elements/Text'
 import { Links } from '../../common/components/elements/links'
+require('dotenv').config()
 
 export default function login() {
     useEffect(() => {
@@ -29,6 +30,7 @@ export default function login() {
         }
         else {
             const request = await axios.post("http://localhost:5000/login", {
+                tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 email: userEmail,
                 password: userPassword,
             })

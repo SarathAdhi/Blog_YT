@@ -6,6 +6,7 @@ import { ThumbUpIcon, ChatIcon, PencilAltIcon } from "@heroicons/react/solid";
 import { Links } from '../../common/components/elements/links';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+require('dotenv').config()
 
 export async function getServerSideProps(context) {
 
@@ -16,7 +17,7 @@ export async function getServerSideProps(context) {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id: postId })
+        body: JSON.stringify({ tokenID: process.env.SECURITY_KEY_FOR_AUTH, id: postId })
     });
     const post = await request.json();
 
@@ -39,7 +40,7 @@ export default function Post({ post }) {
 
     async function updateLike() {
         var response = await axios.post("http://localhost:5000/post/updateLike",
-        { id: displayPost._id }
+        { tokenID: process.env.SECURITY_KEY_FOR_AUTH, id: displayPost._id }
         )
         if(response)
             router.reload(router.asPath)

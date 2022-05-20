@@ -6,6 +6,7 @@ import axios from 'axios';
 import { Button } from '../common/components/elements/button';
 import { create } from 'ipfs-http-client'
 import Router from 'next/router';
+require('dotenv').config()
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
 
@@ -56,6 +57,7 @@ export default function CreateBlog() {
         }
         else {
             var request = await axios.post("http://localhost:5000/createPost", {
+                tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 author: author,
                 authorImage: authorImage,
                 title: blogTitle,
