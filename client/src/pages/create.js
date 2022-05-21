@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Layout } from '../common/layouts/Layout'
+import Layout from '../common/layouts/Layout.tsx'
 import { Input, Textarea } from '../common/components/elements/inputField'
 import { format } from 'date-fns';
 import axios from 'axios';
@@ -12,6 +12,7 @@ const client = create('https://ipfs.infura.io:5001/api/v0')
 
 export default function CreateBlog() {
 
+    const [isLoading, setIsLoading] = useState(false)
     const [author, setAuthor] = useState('')
     const [authorImage, setAuthorImage] = useState('')
     const [blogTitle, setBlogTitle] = useState('')
@@ -22,11 +23,16 @@ export default function CreateBlog() {
 
 
     useEffect(() => {
-        const userDetails = JSON.parse(localStorage.getItem('user-details'))
-        setAuthor(userDetails.username)
-        setAuthorImage(userDetails.userImage)
-        var date = format(new Date(), 'dd MMMMMM yyyy-p');
-        setBlogCreatedAt(date)
+        if (localStorage.getItem('user-details')) {
+            const userDetails = JSON.parse(localStorage.getItem('user-details'))
+            setAuthor(userDetails.username)
+            setAuthorImage(userDetails.userImage)
+            var date = format(new Date(), 'dd MMMMMM yyyy-p');
+            setBlogCreatedAt(date)
+        } else {
+            alert("Login First");
+            Router.push('/auth/login')
+        }
     }, [])
 
     async function uploadImageToIPFS(event) {
@@ -36,6 +42,7 @@ export default function CreateBlog() {
             const addFile = await client.add(file)
             const ipfsUrl = `https://ipfs.infura.io/ipfs/${addFile.path}`
             setBlogImage(ipfsUrl)
+            setIsLoading(false)
         } catch (error) {
             alert('Error uploading file: ', error)
         }
@@ -77,14 +84,19 @@ export default function CreateBlog() {
     };
 
     return (
-        <Layout title="Create" navbar={true} className="md:ml-20">
-            <Input label="Title" name="title" placeholder="Enter a blog title" onChange={(event) => setBlogTitle(event.target.value)} />
-            <Input type="file" name="image" className="text-white" margin="mt-5" label="Image" onChange={(event) => uploadImageToIPFS(event)} />
-            <Textarea label="Content" name="contents" placeholder="Enter the blog" margin="mt-5" onChange={(event) => setBlogMessage(event.target.value)} />
-            <Input label="Tags" margin="mt-5" type='text' name='tags' placeholder="Enter the Tags saperated with comma's"
-                onChange={(e) => setBlogTags((e.target.value).split(","))}
-            />
-            <Button className="mt-5" onClick={postBlog}>Post</Button>
+        <Layout title="Create" navbar={true} className="mt-20 md:ml-20">
+            <div className='w-full flex flex-col justify-center items-center md:w-1/2'>
+                <Input label="Title" name="title" placeholder="Enter a blog title" onChange={(event) => setBlogTitle(event.target.value)} />
+                <Input type="file" name="image" margin="mt-5" label="Image" onChange={(event) => {
+                    setIsLoading(true)
+                    uploadImageToIPFS(event);
+                }} />
+                <Textarea label="Content" name="contents" placeholder="Enter the blog" margin="mt-5" onChange={(event) => setBlogMessage(event.target.value)} />
+                <Input label="Tags" margin="mt-5" type='text' name='tags' placeholder="Enter the Tags saperated with comma's"
+                    onChange={(e) => setBlogTags((e.target.value).split(","))}
+                />
+                <Button className="mt-5" disable={isLoading ? true : false} onClick={postBlog}>{isLoading ? "Loading..." : "Post"}</Button>
+            </div>
         </Layout>
     )
 }

@@ -1,23 +1,28 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const cors = require("cors");
-require('dotenv').config();
-
-const app = express();
-
+const bcrypt = require("bcrypt");
 const PostModel = require("./models/Post.model");
 const UserModel = require("./models/User.model");
+
+const app = express();
+require('dotenv').config();
 
 app.use(express.json());
 app.use(cors());
 
+// Functions ************************
+async function getPostById(id) {
+    var result = await PostModel.findById(id);
+    return result;
+}
 
-// Routes
-
+// Routes ********************************
 app.get('/', (req, res) => {
     res.send("Hello")
 });
 
+// Remove after deployment
 app.get("/getPosts", (req, res) => {
     PostModel.find({}, (err, result) => {
         if (err) {
@@ -30,38 +35,57 @@ app.get("/getPosts", (req, res) => {
 
 app.post("/post/getPost", async (req, res) => {
     const post = req.body;
-    var getPostDetail = (await PostModel.find({ "_id": post.id }))
-    if (getPostDetail.length === 0)
-        res.send({ message: "No Post found. Something went wrong...", status: 400 })
-    else {
-        res.send({ message: JSON.stringify(getPostDetail) })
-    }
+    res.json(await getPostById(post.id))
 });
 
 app.post("/post/updateLike", async (req, res) => {
-    const post = req.body;
-    console.log(post.id)
-    var isPostExist = (await PostModel.find({ "_id": post.id })).length
-
-    if (isPostExist === 0) {
-        res.sendStatus(400);
-    } else {
-        await PostModel.findOneAndUpdate(
-            { "_id": post.id },
-            { $inc: { "likeCount": 1 } }
+    const body = req.body;
+    if (await getPostById(body.id)) {
+        const isUserLikedThisPost = await PostModel.find(
+            {
+                "_id": body.id,
+                likeCount: {
+                    $elemMatch: { $eq: body.username }
+                }
+            }
         )
-        res.sendStatus(200)
+        if (isUserLikedThisPost.length === 0) {
+            await PostModel.findOneAndUpdate(
+                { "_id": body.id },
+                { $push: { "likeCount": body.username } }
+            )
+            res.json(await getPostById(body.id))
+        }
     }
+});
 
+app.post("/post/Comment", async (req, res) => {
+    const post = req.body;
+    if (await getPostById(post.id)) {
+        await PostModel.updateMany(
+            { "_id": post.id },
+            {
+                $push: {
+                    "comments": {
+                        comment: post.comment,
+                        username: post.username,
+                        userImage: post.userImage,
+                    }
+                }
+            }
+        )
+        res.json(await getPostById(post.id))
+    }
 });
 
 app.post("/createPost", async (req, res) => {
-    const post = req.body;
-    const newPost = new PostModel(post);
+    const body = req.body;
+    const newPost = new PostModel(body);
     await newPost.save();
-    res.json(post);
+    res.json(body);
 });
 
+// Remove after deployment
 app.get("/getUsers", (req, res) => {
     UserModel.find({}, (err, result) => {
         if (err) {
@@ -73,33 +97,33 @@ app.get("/getUsers", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-    const post = req.body;
-
-    var isEmailExist = (await UserModel.find({ "email": post.email })).length
-
-    if (isEmailExist === 0) {
-        res.json({ message: "Email does not exist !", status: 400 });
-    } else {
-        var isPasswordCorrect = (await UserModel.find({ "email": post.email, "password": post.password })).length
-        if (isPasswordCorrect === 0)
-            res.send({ message: "Wrong Password", status: 400 })
+    const body = req.body;
+    const userDetails = (await UserModel.find({ "email": body.email }))
+    if (userDetails.length === 0) {
+        res.json({ error: "User does not exist.", status: 400 });
+    }
+    else {
+        const isValidPassword = await bcrypt.compare(body.password, userDetails[0].password);
+        if (isValidPassword)
+            res.send(userDetails[0])
         else {
-            var user = (await UserModel.find({ "email": post.email, "password": post.password }))
-            res.send({ username: user[0].username, userImage: user[0].userImage, status: 200 })
+            res.json({ error: "Invalid Password.", status: 400 });
         }
     }
-
 });
 app.post("/createUser", async (req, res) => {
-    const post = req.body;
-    const newUser = new UserModel(post);
-    var isUsernameExist = (await UserModel.find({ "username": post.username })).length
-    var isEmailnameExist = (await UserModel.find({ "email": post.email })).length
+    const body = req.body;
+    const isUsernameExist = (await UserModel.find({ "username": body.username })).length
+    const isEmailnameExist = (await UserModel.find({ "email": body.email })).length
 
     if (isUsernameExist === 0 && isEmailnameExist === 0) {
+        const salt = await bcrypt.genSalt(10);
+        body.password = await bcrypt.hash(body.password, salt);
+        const newUser = new UserModel(body);
         await newUser.save();
-        res.json({ username: post.username, userImage: post.userImage, status: 200 });
-    } else {
+        res.json({ username: body.username, userImage: body.userImage, status: 200 });
+    }
+    else {
         if (isEmailnameExist > 0)
             res.send({ message: "Email already exist", status: 400 })
         else

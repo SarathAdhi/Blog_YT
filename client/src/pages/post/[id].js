@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Divider } from '../../common/components/elements/Divider';
-import { H1, H2, H5, P } from '../../common/components/elements/Text';
-import { Layout } from '../../common/layouts/Layout';
+import { H1, H2, H3, H5, P } from '../../common/components/elements/Text';
+import Layout from '../../common/layouts/Layout.tsx';
 import { ThumbUpIcon, ChatIcon, PencilAltIcon } from "@heroicons/react/solid";
-import { Links } from '../../common/components/elements/links';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import Router from 'next/router';
+import { Textarea } from '../../common/components/elements/inputField';
 require('dotenv').config()
 
 export async function getServerSideProps(context) {
@@ -32,19 +32,45 @@ export async function getServerSideProps(context) {
 export default function Post({ post }) {
 
     const [displayPost, setDisplayPost] = useState([])
-    const router = useRouter();
+    const [userComment, setUserComment] = useState('')
+    const [userDetails, setUserDetails] = useState([])
 
     useEffect(() => {
-        setDisplayPost(JSON.parse(post.message)[0])
+        if (localStorage.getItem('user-details')) {
+            const userDetails = JSON.parse(localStorage.getItem('user-details'))
+            setUserDetails(userDetails)
+
+        } else {
+            alert("Login First");
+            Router.push('/auth/login')
+        }
+        setDisplayPost(post)
     }, [])
 
     async function updateLike() {
         var response = await axios.post("http://localhost:5000/post/updateLike",
-        { tokenID: process.env.SECURITY_KEY_FOR_AUTH, id: displayPost._id }
+            { tokenID: process.env.SECURITY_KEY_FOR_AUTH, id: displayPost._id, username: userDetails.username }
         )
-        if(response)
-            router.reload(router.asPath)
+        // Updating the post on real time without refreshing
+        // console.log(response)
+        setDisplayPost(response.data)
     }
+
+    async function submitUserComment() {
+        var response = await axios.post("http://localhost:5000/post/Comment",
+            {
+                tokenID: process.env.SECURITY_KEY_FOR_AUTH,
+                id: displayPost._id,
+                username: userDetails.username,
+                comment: userComment,
+                userImage: userDetails.userImage,
+            }
+        )
+        // console.log(response)
+        // Updating the post on real time without refreshing
+        setDisplayPost(response.data)
+    }
+
 
     return (
         <Layout title={displayPost.title} navbar={true} className="mt-5 md:ml-20">
@@ -71,24 +97,46 @@ export default function Post({ post }) {
             </div>
 
             <Divider className="md:mr-2 w-full" />
+
             <div className='my-5 w-11/12 flex items-center justify-between' id='comments'>
                 <H2>Comments&nbsp;</H2>
-                <Links href="#">
-                    <PencilAltIcon width={30} height={30} />
-                </Links>
+                <PencilAltIcon className='cursor-pointer' width={30} height={30} onClick={submitUserComment} />
             </div>
+
             <Divider className="w-11/12 -mt-4" />
-            <div className='w-full'>
+
+            <div className='w-full mb-20'>
+                <div className='flex justify-center mt-2'>
+                    <Textarea label="Enter your comment" placeholder="Comments......."
+                        onChange={(event) => {
+                            setUserComment(event.target.value)
+                        }} />
+                </div>
                 {
-                    displayPost.comments && displayPost.comments.map(comment => {
-                        return <P key={comment}>{comment}</P>
-                    })
+                    displayPost.comments &&
+                    <div className='flex justify-center flex-col mt-5 w-full'>
+                        {
+                            displayPost.comments.map((details, index) => {
+                                return (
+                                    <div key={index} className="mx-8 bg-gray-700 rounded-xl p-3 mb-5 flex flex-col" >
+                                        <div className='flex items-center'>
+                                            <img className='w-10 h-10 rounded-full' src={details.userImage} />
+                                            <P className="ml-2">{details.username}</P>
+                                        </div>
+                                        <H3 className="ml-12">{details.comment}</H3>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+
                 }
             </div>
             <div className='fixed bottom-0 bg-white cursor-pointer px-3 py-1 rounded flex items-center justify-between w-auto flex-row my-2'>
                 <div className='flex items-center text-slate-600 hover:text-black' onClick={updateLike}>
                     <ThumbUpIcon width={30} height={30} />
-                    <p>&nbsp;{displayPost.likeCount}</p>
+                    {/* {!displayPost.likeCount && 0} */}
+                    {displayPost.likeCount && displayPost.likeCount.length}
                 </div>
                 <a href='#comments' className='ml-5'><ChatIcon width={30} height={30} className="text-slate-600 hover:text-black" /></a>
             </div>

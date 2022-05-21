@@ -4,7 +4,7 @@ import { Button } from '../../common/components/elements/button'
 import { Input } from '../../common/components/elements/inputField'
 import { Links } from '../../common/components/elements/links'
 import { P } from '../../common/components/elements/Text'
-import { Layout } from '../../common/layouts/Layout'
+import Layout from '../../common/layouts/Layout.tsx'
 import { create } from 'ipfs-http-client'
 import Router from 'next/router'
 require('dotenv').config()
@@ -13,6 +13,7 @@ const client = create('https://ipfs.infura.io:5001/api/v0')
 
 export default function signup() {
 
+    const [isLoading, setIsLoading] = useState(false)
     const [userName, setUserName] = useState('')
     const [userEmail, setUserEmail] = useState('')
     const [userPassword, setUserPassword] = useState('')
@@ -26,6 +27,7 @@ export default function signup() {
             const addFile = await client.add(file)
             const ipfsUrl = `https://ipfs.infura.io/ipfs/${addFile.path}`
             setUserImage(ipfsUrl)
+            setIsLoading(false)
         } catch (error) {
             alert('Error uploading file: ', error)
         }
@@ -65,14 +67,21 @@ export default function signup() {
 
     return (
         <Layout title="Sign Up" navbar={true} className="md:ml-20 mt-40">
-            <Input type="text" name="username" placeholder="Enter a username" label="Username" onChange={(event) => setUserName(event.target.value)} />
-            <Input type="email" name="email" margin="mt-5" placeholder="Enter your Email" label="Email" onChange={(event) => setUserEmail(event.target.value)} />
-            <Input type="password" name="password" margin="mt-5" placeholder="Enter your Password" label="Password" onChange={(event) => setUserPassword(event.target.value)} />
-            <Input type="file" name="image" className="text-white" margin="mt-5" label="Image" onChange={(event) => uploadImageToIPFS(event)} />
-            <div className='mt-5 flex'>
-                <P>Existing User?</P>&nbsp;<Links href="/auth/login" className="text-sky-500 underline">Login</Links>
+            <div className='w-full flex flex-col justify-center items-center md:w-2/5'>
+                <Input type="text" name="username" placeholder="Enter a username" label="Username" onChange={(event) => setUserName(event.target.value)} />
+                <Input type="email" name="email" margin="mt-5" placeholder="Enter your Email" label="Email" onChange={(event) => setUserEmail(event.target.value)} />
+                <Input type="password" name="password" margin="mt-5" placeholder="Enter your Password" label="Password" onChange={(event) => setUserPassword(event.target.value)} />
+                <Input type="file" label="Image" name="image" className="text-white" margin="mt-5" onChange={(event) => {
+                    setIsLoading(true)
+                    uploadImageToIPFS(event);
+                }} />
+
+                <div className='mt-5 flex'>
+                    <P>Existing User?</P>&nbsp;<Links href="/auth/login" className="text-sky-500 underline">Login</Links>
+                </div>
+                <Button className="mt-5" disable={isLoading ? true : false} onClick={createUser}>{isLoading ? "Loading..." : "Register"}</Button>
             </div>
-            <Button className="mt-5" onClick={createUser}>Register</Button>
+
         </Layout>
     )
 }

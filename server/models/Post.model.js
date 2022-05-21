@@ -30,12 +30,14 @@ const PostSchema = new mongoose.Schema({
     required: true
   },
   likeCount: {
-    type: Number,
-    default: 0,
-  },
-  comments: {
     type: Array,
   },
+  comments: [{
+    username: String,
+    comment: String,
+    userImage: String,
+    likeCount: Array
+  }],
 });
 
 const PostModel = mongoose.model("post", PostSchema);

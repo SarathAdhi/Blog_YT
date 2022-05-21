@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Layout } from '../../common/layouts/Layout'
+import Layout from '../../common/layouts/Layout.tsx'
 import axios from 'axios'
 import { Input } from '../../common/components/elements/inputField'
 import { Button } from '../../common/components/elements/button'
@@ -11,7 +11,7 @@ require('dotenv').config()
 export default function login() {
     useEffect(() => {
         const isUserLoggedIn = localStorage.getItem('user-details');
-        if(isUserLoggedIn.length > 0) {
+        if (isUserLoggedIn.length > 0) {
             Router.push("/")
         }
     }, [])
@@ -29,29 +29,32 @@ export default function login() {
             alert('Enter the Password');
         }
         else {
-            const request = await axios.post("http://localhost:5000/login", {
+            await axios.post("http://localhost:5000/login", {
                 tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 email: userEmail,
                 password: userPassword,
+            }).then(response => {
+                if (response.data.status === 400) {
+                    alert(response.data.error)
+                } else {
+                    localStorage.setItem('user-details', JSON.stringify(response.data))
+                    alert("Login Successfull");
+                    Router.push('/');
+                }
             })
-            if (request.data.status === 200) {
-                localStorage.setItem('user-details', JSON.stringify(request.data))
-                alert('Login Successful');
-                Router.push('/');
-            } else {
-                alert(request.data.message);
-            }
         }
     }
 
     return (
-        <Layout title="Login" navbar={true} className="md:ml-20 mt-40">
-            <Input type="email" name="email" margin="mt-5" placeholder="Enter your Email" label="Email" onChange={(event) => setUserEmail(event.target.value)} />
-            <Input type="password" name="password" margin="mt-5" placeholder="Enter your Password" label="Password" className="mt-5" onChange={(event) => setUserPassword(event.target.value)} />
-            <div className='mt-5 flex'>
-                <P>New user?</P>&nbsp;<Links href="/auth/signup" className="text-sky-500 underline">Create an account</Links>
+        <Layout title="Login" navbar={true} className="md:ml-20 mt-20 md:mt-40">
+            <div className='w-full flex flex-col justify-center items-center md:w-2/5'>
+                <Input type="email" name="email" margin="mt-5" placeholder="Enter your Email" label="Email" onChange={(event) => setUserEmail(event.target.value)} />
+                <Input type="password" name="password" margin="mt-5" placeholder="Enter your Password" label="Password" className="mt-5" onChange={(event) => setUserPassword(event.target.value)} />
+                <div className='mt-5 flex'>
+                    <P>New user?</P>&nbsp;<Links href="/auth/signup" className="text-sky-500 underline">Create an account</Links>
+                </div>
+                <Button className="mt-5" onClick={loginUser}>Login</Button>
             </div>
-            <Button className="mt-5" onClick={loginUser}>Login</Button>
         </Layout>
     )
 }

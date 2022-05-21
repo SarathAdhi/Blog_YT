@@ -2,8 +2,8 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { Links } from '../common/components/elements/links'
 import { H5, H3, H4, H6 } from '../common/components/elements/Text'
-import { Layout } from '../common/layouts/Layout'
 import { ThumbUpIcon } from "@heroicons/react/solid";
+import Layout from '../common/layouts/Layout.tsx';
 
 export async function getServerSideProps(context) {
   const response = await fetch("http://localhost:5000/getPosts")
@@ -53,7 +53,7 @@ export default function Home({ posts }) {
               )}
               <div className='flex items-center justify-center sm:justify-start flex-row mt-2 md:mt-5'>
                 <ThumbUpIcon width={20} height={20} />
-                <p>&nbsp;{post.likeCount}</p>
+                <p>&nbsp;{post.likeCount.length}</p>
               </div>
 
             </div>
