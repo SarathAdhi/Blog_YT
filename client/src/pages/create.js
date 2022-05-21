@@ -3,7 +3,7 @@ import Layout from '../common/layouts/Layout.tsx'
 import { Input, Textarea } from '../common/components/elements/inputField'
 import { format } from 'date-fns';
 import axios from 'axios';
-import { Button } from '../common/components/elements/button';
+import Button from '../common/components/elements/button.tsx';
 import { create } from 'ipfs-http-client'
 import Router from 'next/router';
 require('dotenv').config()

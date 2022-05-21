@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Button } from '../../common/components/elements/button'
+import Button from '../../common/components/elements/button.tsx'
 import { Input } from '../../common/components/elements/inputField'
 import { Links } from '../../common/components/elements/links'
 import { P } from '../../common/components/elements/Text'

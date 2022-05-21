@@ -20,13 +20,13 @@ const Layout: NextPage<Props> = ({
 }) => {
   return (
     <>
-      <Head>
+      <Head children={undefined}>
         <title>{title}</title>
       </Head>
       {navbar && <Navbar />}
       <main className="m-0 bg-black text-white pt-16 min-h-screen md:pt-2">
         <Divider className="block md:hidden my-2" />
-        <H3 className="text-xl md:text-3xl text-center md:ml-20">{title}</H3>
+        <H3 className="text-xl md:text-3xl text-center md:ml-20" children={undefined}>{title}</H3>
         <Divider className="my-2" />
         <div
           className={clsx(
