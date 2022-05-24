@@ -39,11 +39,11 @@ export default function Home({ posts }) {
             <div className='flex flex-col justify-center sm:justify-between w-full h-auto text-white'>
               <div className='md:break-all sm:mr-16 flex justify-center items-center sm:block mt-5 sm:mt-0 flex-col'>
                 <div className='flex items-center mb-2'>
-                  <img loading='lazy' className='w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2' src={post.authorImage} />
+                  <img loading='lazy' className='w-8 h-8 hidden sm:block sm:w-10 sm:h-10 rounded-full mr-2' src={post.authorImage} />
                   <H5 className="text-center font-normal flex">{post.author + " · "}<p className='text-zinc-400'>&nbsp;{post.createdAt.split("-")[0]}</p></H5>
                 </div>
                 <Divider className="my-1 sm:hidden" />
-                <H3 className='text-center sm:text-left'>{post.title}</H3>
+                <H3 className='text-lg sm:text-xl text-center sm:text-left'>{post.title}</H3>
                 <Divider className="mt-2 sm:hidden" />
                 <P className='mt-2 block text-center sm:text-left'>{stringifyBlogContent(post.message)}</P>
               </div>
