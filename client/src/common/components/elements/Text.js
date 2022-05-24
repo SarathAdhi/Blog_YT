@@ -16,7 +16,7 @@ export const H2 = ({ className, children }) => {
 
 export const H3 = ({ className, children }) => {
     return (
-        <h3 className={clsx("font-semibold", className)}>{children}</h3>
+        <h3 className={clsx("font-semibold text-xl", className)}>{children}</h3>
     )
 }
 

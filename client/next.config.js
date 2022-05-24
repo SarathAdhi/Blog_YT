@@ -1,7 +1,9 @@
 module.exports = (phase, { defaultConfig }) => {
   return {
     ...defaultConfig,
-
+    images: {
+      domains: ['ipfs.infura.io'],
+    },
     webpack: (config) => {
       config.resolve = {
         ...config.resolve,

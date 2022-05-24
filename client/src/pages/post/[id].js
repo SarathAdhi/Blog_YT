@@ -6,6 +6,8 @@ import { ThumbUpIcon, ChatIcon, PencilAltIcon } from "@heroicons/react/solid";
 import axios from 'axios';
 import Router from 'next/router';
 import { Textarea } from '../../common/components/elements/inputField';
+import { Tags } from '../../common/components/elements/Tags';
+import { Links } from '../../common/components/elements/links';
 require('dotenv').config()
 
 export async function getServerSideProps(context) {
@@ -57,6 +59,10 @@ export default function Post({ post }) {
     }
 
     async function submitUserComment() {
+        if(userComment === '') {
+            alert("Empty comments");
+            return false
+        }
         var response = await axios.post("http://localhost:5000/post/Comment",
             {
                 tokenID: process.env.SECURITY_KEY_FOR_AUTH,
@@ -73,7 +79,7 @@ export default function Post({ post }) {
 
 
     return (
-        <Layout title={displayPost.title} navbar={true} className="mt-5 md:ml-20">
+        <Layout title={displayPost.title} className="mt-5 md:ml-20">
             <H5 className="mb-5 text-center font-normal flex">{displayPost.author + " · "}<p className='text-zinc-400'>&nbsp;{displayPost.createdAt}</p></H5>
             <div className='w-11/12 md:w-2/5 text-center'>
                 <img className='w-full rounded-lg' src={displayPost.blogImage} />
@@ -86,12 +92,16 @@ export default function Post({ post }) {
                 {
                     displayPost.tags &&
                     displayPost.tags.map((tag, index) => {
-                        return <P key={tag + index} className="my-1 md:my-5 text-lg text-black text-center rounded-2xl px-2 mr-2 bg-white">{tag}</P>
+                        return (
+                            <Links  key={tag + index} href={`/tags/${tag}`}>
+                                <Tags>{tag}</Tags>
+                            </Links>
+                        )
                     })
                 }
                 {
-                    !!displayPost.tags &&
-                    <P className="my-1 md:my-5 text-lg text-black text-center rounded-2xl px-2 mr-2 bg-white">No Tags</P>
+                    !displayPost.tags &&
+                    <Tags>No Tags</Tags>
 
                 }
             </div>
@@ -99,15 +109,15 @@ export default function Post({ post }) {
             <Divider className="md:mr-2 w-full" />
 
             <div className='my-5 w-11/12 flex items-center justify-between' id='comments'>
-                <H2>Comments&nbsp;</H2>
+                <H2>Comments&nbsp;{displayPost.comments && displayPost.comments.length}</H2>
                 <PencilAltIcon className='cursor-pointer' width={30} height={30} onClick={submitUserComment} />
             </div>
 
             <Divider className="w-11/12 -mt-4" />
 
-            <div className='w-full mb-20'>
-                <div className='flex justify-center mt-2'>
-                    <Textarea label="Enter your comment" placeholder="Comments......."
+            <div className='w-11/12 flex justify-center flex-col mb-20'>
+                <div className='w-full mt-2'>
+                    <Textarea placeholder="Add a comment..."
                         onChange={(event) => {
                             setUserComment(event.target.value)
                         }} />
@@ -118,12 +128,12 @@ export default function Post({ post }) {
                         {
                             displayPost.comments.map((details, index) => {
                                 return (
-                                    <div key={index} className="mx-8 bg-gray-700 rounded-xl p-3 mb-5 flex flex-col" >
+                                    <div key={index} className="my-1 bg-gray-700 rounded-xl p-3 mb-5 flex flex-col" >
                                         <div className='flex items-center'>
-                                            <img className='w-10 h-10 rounded-full' src={details.userImage} />
+                                            <img className='w-8 h-8 rounded-full' src={details.userImage} />
                                             <P className="ml-2">{details.username}</P>
                                         </div>
-                                        <H3 className="ml-12">{details.comment}</H3>
+                                        <P className="ml-10">{details.comment}</P>
                                     </div>
                                 )
                             })

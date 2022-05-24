@@ -13,7 +13,7 @@ import {
 import { HomeIcon, PencilAltIcon, TagIcon, LoginIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import { Links } from "./elements/links";
-import { H2 } from "./elements/Text";
+import { H2, P } from "./elements/Text";
 import { useEffect, useState } from "react";
 
 const resources = [
@@ -60,9 +60,9 @@ const sideNavbarLinks = [
         Icon: PencilAltIcon
     },
     {
-        key: "categories",
-        name: "Categories",
-        href: "/categories",
+        key: "tags",
+        name: "Tags",
+        href: "/tags",
         Icon: TagIcon
     }
 ]
@@ -86,10 +86,10 @@ export default function Navbar() {
 
     const NavLinks = ({ onClick, href, Icon, title }) => {
         return (
-            <Links href={href} onClick={onClick} className="text-base font-medium text-white duration-300 hover:text-sky-500">
+            <Links href={href} onClick={onClick} className="flex flex-col items-center text-white duration-300 hover:text-sky-500">
                 <Icon width={35} height={35} />
-                <div className="absolute pl-0 -mt-9 font-bold opacity-0 hover:animate-bounce hover:opacity-100 hover:pl-16">
-                    <H2 className="bg-white py-1 px-2 rounded-lg">{title}</H2>
+                <div className="font-semibold">
+                    <P>{title}</P>
                 </div>
             </Links>
         )

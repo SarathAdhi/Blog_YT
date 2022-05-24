@@ -66,8 +66,8 @@ export default function signup() {
     }
 
     return (
-        <Layout title="Sign Up" navbar={true} className="md:ml-20 mt-40">
-            <div className='w-full flex flex-col justify-center items-center md:w-2/5'>
+        <Layout title="Sign Up" className="md:ml-20 mt-40">
+            <div className='w-11/12 flex flex-col justify-center items-center md:w-2/5'>
                 <Input type="text" name="username" placeholder="Enter a username" label="Username" onChange={(event) => setUserName(event.target.value)} />
                 <Input type="email" name="email" margin="mt-5" placeholder="Enter your Email" label="Email" onChange={(event) => setUserEmail(event.target.value)} />
                 <Input type="password" name="password" margin="mt-5" placeholder="Enter your Password" label="Password" onChange={(event) => setUserPassword(event.target.value)} />

@@ -6,6 +6,7 @@ import axios from 'axios';
 import Button from '../common/components/elements/button.tsx';
 import { create } from 'ipfs-http-client'
 import Router from 'next/router';
+
 require('dotenv').config()
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
@@ -84,8 +85,8 @@ export default function CreateBlog() {
     };
 
     return (
-        <Layout title="Create" navbar={true} className="mt-20 md:ml-20">
-            <div className='w-full flex flex-col justify-center items-center md:w-1/2'>
+        <Layout title="Create" className="mt-20 md:ml-20">
+            <div className='w-11/12 flex flex-col justify-center items-center md:w-1/2'>
                 <Input label="Title" name="title" placeholder="Enter a blog title" onChange={(event) => setBlogTitle(event.target.value)} />
                 <Input type="file" name="image" margin="mt-5" label="Image" onChange={(event) => {
                     setIsLoading(true)

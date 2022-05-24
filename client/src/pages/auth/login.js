@@ -46,8 +46,8 @@ export default function login() {
     }
 
     return (
-        <Layout title="Login" navbar={true} className="md:ml-20 mt-20 md:mt-40">
-            <div className='w-full flex flex-col justify-center items-center md:w-2/5'>
+        <Layout title="Login" className="md:ml-20 mt-20 md:mt-40">
+            <div className='w-11/12 flex flex-col justify-center items-center md:w-2/5'>
                 <Input type="email" name="email" margin="mt-5" placeholder="Enter your Email" label="Email" onChange={(event) => setUserEmail(event.target.value)} />
                 <Input type="password" name="password" margin="mt-5" placeholder="Enter your Password" label="Password" className="mt-5" onChange={(event) => setUserPassword(event.target.value)} />
                 <div className='mt-5 flex'>

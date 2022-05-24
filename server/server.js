@@ -38,6 +38,12 @@ app.post("/post/getPost", async (req, res) => {
     res.json(await getPostById(post.id))
 });
 
+app.get("/post/tags", async (req, res) => {
+    // const post = req.body;
+    var tags = await PostModel.find({}).select('tags');
+    res.json(tags)
+});
+
 app.post("/post/updateLike", async (req, res) => {
     const body = req.body;
     if (await getPostById(body.id)) {
