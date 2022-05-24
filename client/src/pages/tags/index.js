@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { Links } from '../../common/components/elements/links';
 import { Tags } from '../../common/components/elements/Tags';
 import Layout from '../../common/layouts/Layout.tsx';
+import Url from '../../constants/Url'
 
 export async function getServerSideProps(context) {
-    const response = await fetch("http://localhost:5000/post/tags")
+    const response = await fetch(`${Url}/post/tags`)
     const tags = await response.json()
     return {
         props: { tags }

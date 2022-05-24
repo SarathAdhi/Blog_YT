@@ -8,6 +8,8 @@ import Router from 'next/router';
 import { Textarea } from '../../common/components/elements/inputField';
 import { Tags } from '../../common/components/elements/Tags';
 import { Links } from '../../common/components/elements/links';
+import Url from '../../constants/Url'
+
 require('dotenv').config()
 
 export async function getServerSideProps(context) {
@@ -50,7 +52,7 @@ export default function Post({ post }) {
     }, [])
 
     async function updateLike() {
-        var response = await axios.post("http://localhost:5000/post/updateLike",
+        var response = await axios.post(`${Url}/post/updateLike`,
             { tokenID: process.env.SECURITY_KEY_FOR_AUTH, id: displayPost._id, username: userDetails.username }
         )
         // Updating the post on real time without refreshing
@@ -63,7 +65,7 @@ export default function Post({ post }) {
             alert("Empty comments");
             return false
         }
-        var response = await axios.post("http://localhost:5000/post/Comment",
+        var response = await axios.post(`${Url}/post/Comment`,
             {
                 tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 id: displayPost._id,

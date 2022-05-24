@@ -6,6 +6,7 @@ import Button from '../../common/components/elements/button.tsx'
 import Router from 'next/router'
 import { P } from '../../common/components/elements/Text'
 import { Links } from '../../common/components/elements/links'
+import Url from '../../constants/url'
 require('dotenv').config()
 
 export default function login() {
@@ -29,7 +30,7 @@ export default function login() {
             alert('Enter the Password');
         }
         else {
-            await axios.post("http://localhost:5000/login", {
+            await axios.post(Url + "/login", {
                 tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 email: userEmail,
                 password: userPassword,

@@ -6,9 +6,10 @@ import { ThumbUpIcon } from "@heroicons/react/solid";
 import Layout from '../common/layouts/Layout.tsx';
 import { Tags } from '../common/components/elements/Tags';
 import { Divider } from '../common/components/elements/Divider'
+import Url from '../constants/Url'
 
 export async function getServerSideProps(context) {
-  const response = await fetch("http://localhost:5000/getPosts")
+  const response = await fetch(`${Url}/getPosts`)
   const posts = await response.json()
   return {
     props: { posts }

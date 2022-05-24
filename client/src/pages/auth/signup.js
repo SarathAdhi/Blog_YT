@@ -7,6 +7,7 @@ import { P } from '../../common/components/elements/Text'
 import Layout from '../../common/layouts/Layout.tsx'
 import { create } from 'ipfs-http-client'
 import Router from 'next/router'
+import Url from '../../constants/url'
 require('dotenv').config()
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
@@ -47,7 +48,7 @@ export default function signup() {
             alert('Upload a Profile Pic !!');
         }
         else {
-            var request = await axios.post("http://localhost:5000/createUser", {
+            var request = await axios.post(Url + "/createUser", {
                 tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 username: userName,
                 email: userEmail,
