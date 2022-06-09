@@ -4,7 +4,7 @@ import { RenderPosts } from "../../common/components/RenderPosts.js";
 import { useRouter } from "next/router";
 import url from "../../common/constants/backendUrl";
 
-export async function getStaticProps (context) {
+export async function getServerSideProps(context) {
   const { tag } = context.query;
   const response = await fetch(`${url}/post/tags/${tag}`);
   const posts = await response.json();
