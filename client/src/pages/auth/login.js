@@ -6,8 +6,7 @@ import Button from "../../common/components/elements/button.tsx";
 import Router from "next/router";
 import { P } from "../../common/components/elements/Text";
 import { Links } from "../../common/components/elements/links";
-import Url from "../../constants/url";
-require("dotenv").config();
+import { Url } from "../../constants/url";
 
 export default function login() {
   useEffect(() => {
