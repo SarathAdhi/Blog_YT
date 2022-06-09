@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Layout from '../common/layouts/Layout.tsx'
-import { Input, Textarea } from '../common/components/elements/inputField'
+import Layout from '../../common/layouts/Layout'
+import { Input, Textarea } from '../../common/components/elements/inputField'
 import { format } from 'date-fns';
 import axios from 'axios';
-import Button from '../common/components/elements/button.tsx';
+import Button from '../../common/components/elements/button.tsx';
 import { create } from 'ipfs-http-client'
 import Router from 'next/router';
-import Url from '../constants/Url'
+import Url from '../../constants/Url'
 
 require('dotenv').config()
 
@@ -16,6 +16,7 @@ export default function CreateBlog() {
 
     const [isLoading, setIsLoading] = useState(false)
     const [author, setAuthor] = useState('')
+    const [authorId, setAuthorId] = useState('')
     const [authorImage, setAuthorImage] = useState('')
     const [blogTitle, setBlogTitle] = useState('')
     const [blogImage, setBlogImage] = useState('')
@@ -28,6 +29,7 @@ export default function CreateBlog() {
         if (localStorage.getItem('user-details')) {
             const userDetails = JSON.parse(localStorage.getItem('user-details'))
             setAuthor(userDetails.username)
+            setAuthorId(userDetails._id)
             setAuthorImage(userDetails.userImage)
             var date = format(new Date(), 'dd MMMMMM yyyy-p');
             setBlogCreatedAt(date)
@@ -68,6 +70,7 @@ export default function CreateBlog() {
             var request = await axios.post(`${Url}/createPost`, {
                 tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 author: author,
+                authorId: authorId,
                 authorImage: authorImage,
                 title: blogTitle,
                 blogImage: blogImage,
@@ -86,7 +89,7 @@ export default function CreateBlog() {
     };
 
     return (
-        <Layout title="Create" className="mt-20 md:ml-20">
+        <Layout title="Create">
             <div className='w-11/12 flex flex-col justify-center items-center md:w-1/2'>
                 <Input label="Title" name="title" placeholder="Enter a blog title" onChange={(event) => setBlogTitle(event.target.value)} />
                 <Input type="file" name="image" margin="mt-5" label="Image" onChange={(event) => {

@@ -1,13 +1,24 @@
+const ObjectId = require("mongoose").Types.ObjectId;
 const PostModel = require("../models/Post.model");
 
 async function getPostById(id) {
-  var result = await PostModel.findById(id);
+  const result = await PostModel.findById(id);
   return result;
 }
 
 const GetPost = async (req, res) => {
   const post = req.body;
-  res.json(await getPostById(post.id));
+  const { tokenID } = req.body;
+  if (tokenID === process.env.SECURITY_KEY_FOR_AUTH) {
+    if (ObjectId.isValid(post.id)) {
+      const getPost = await getPostById(post.id);
+      res.json(getPost);
+    } else {
+      res.json({ status: 400, message: "No post found" });
+    }
+  } else {
+    res.sendCode(400);
+  }
 };
 
 const CreatePost = async (req, res) => {
@@ -56,7 +67,13 @@ const PostComment = async (req, res) => {
 };
 
 const GetTags = async (req, res) => {
-  var tags = await PostModel.find({}).select("tags");
+  const tags = await PostModel.find({}).select("tags");
+  res.json(tags);
+};
+
+const GetAndFilterTags = async (req, res) => {
+  const tag = req.params.tag;
+  const tags = await PostModel.find({ tags: tag });
   res.json(tags);
 };
 
@@ -67,7 +84,7 @@ const GetAllPosts = (req, res) => {
     } else {
       res.json(result);
     }
-  });
+  }).sort({ createdAt: -1 });
 };
 
 module.exports = {
@@ -75,6 +92,7 @@ module.exports = {
   CreatePost,
   PostComment,
   GetTags,
+  GetAndFilterTags,
   UpdateLike,
   GetAllPosts,
 };

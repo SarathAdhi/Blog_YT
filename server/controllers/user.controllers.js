@@ -1,6 +1,11 @@
 const UserModel = require("../models/User.model");
 const bcrypt = require("bcrypt");
 
+async function getUserById(id) {
+  const result = await UserModel.findById(id);
+  return result;
+}
+
 const Login = async (req, res) => {
   const body = req.body;
   const userDetails = await UserModel.find({ email: body.email });
@@ -72,9 +77,53 @@ const GetAllUsers = (req, res) => {
   });
 };
 
+const getAuthorFollowers = async (req, res) => {
+  const { authorId } = req.params;
+  const author = await getUserById(authorId);
+  res.send(author.followers);
+};
+
+const updateFollower = async (req, res) => {
+  const followerId = req.body.myId;
+  const authorId = req.body.authorId;
+
+  if (followerId === authorId) return res.send(false);
+
+  const isUserAlreadyAFollower = await UserModel.find({
+    _id: followerId,
+    following: {
+      $elemMatch: { $eq: authorId },
+    },
+  });
+
+  if (isUserAlreadyAFollower.length === 0) {
+    await UserModel.updateOne(
+      { _id: followerId },
+      {
+        $push: {
+          following: authorId,
+        },
+      }
+    );
+    await UserModel.updateOne(
+      { _id: authorId },
+      {
+        $push: {
+          followers: followerId,
+        },
+      }
+    );
+    res.send(true);
+  } else {
+    res.send(false);
+  }
+};
+
 module.exports = {
   Login,
   CreateUser,
   GetUser,
   GetAllUsers,
+  getAuthorFollowers,
+  updateFollower,
 };

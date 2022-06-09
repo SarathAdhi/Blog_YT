@@ -6,6 +6,7 @@ const {
   PostComment,
   GetPost,
   GetTags,
+  GetAndFilterTags,
   UpdateLike,
   CreatePost,
   GetAllPosts,
@@ -15,6 +16,8 @@ const {
   CreateUser,
   GetUser,
   GetAllUsers,
+  getAuthorFollowers,
+  updateFollower,
 } = require("./controllers/user.controllers.js");
 
 const app = express();
@@ -27,21 +30,26 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-// Remove after deployment
+// // Remove after deployment
+app.get("/getUsers", GetAllUsers);
+app.post("/login", Login);
+app.post("/createUser", CreateUser);
+app.post("/profile/getUser", GetUser);
+
+app.get("/getFollowers/:authorId", getAuthorFollowers);
+app.post("/follow/user", updateFollower);
+
 app.get("/getPosts", GetAllPosts);
-// 
 app.post("/post/getPost", GetPost);
 app.post("/createPost", CreatePost);
 app.post("/post/updateLike", UpdateLike);
 app.post("/post/Comment", PostComment);
 app.get("/post/tags", GetTags);
+app.get("/post/tags/:tag", GetAndFilterTags);
 
-// Remove after deployment
-app.get("/getUsers", GetAllUsers);
-//
-app.post("/login", Login);
-app.post("/createUser", CreateUser);
-app.post("/profile/getUser", GetUser);
+app.get("*", (req, res) => {
+  res.send("Page Not Found");
+});
 
 const CONNECTION_URL = process.env.DATABASE_URL;
 const PORT = process.env.PORT || 5000;
