@@ -7,13 +7,13 @@ import axios from "axios";
 import Router from "next/router";
 import { Tags } from "../../common/components/elements/Tags";
 import { Links } from "../../common/components/elements/links";
-import Url from "../../constants/url";
+import url from "../../common/constants/backendUrl";
 
 require("dotenv").config();
 
 export async function getServerSideProps(context) {
   const postId = context.query.id;
-  const request = await fetch(`${Url}/post/getPost`, {
+  const request = await fetch(`${url}/post/getPost`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -26,7 +26,7 @@ export async function getServerSideProps(context) {
   });
   const post = await request.json();
 
-  const request2 = await fetch(`${Url}/getFollowers/${post.authorId}`, {
+  const request2 = await fetch(`${url}/getFollowers/${post.authorId}`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -65,6 +65,10 @@ export default function Post({ post, authorFollowers }) {
     }
   }, []);
 
+  function handleComments(e) {
+    setUserComment(e);
+  }
+
   async function isUserFollowingAuthor() {
     if (!isUserFollowing) {
       const following = await authorFollowers.includes(userDetails._id);
@@ -74,7 +78,7 @@ export default function Post({ post, authorFollowers }) {
   }
 
   async function followAuthor() {
-    const response = await axios.post(`${Url}/follow/user`, {
+    const response = await axios.post(`${url}/follow/user`, {
       tokenID: process.env.SECURITY_KEY_FOR_AUTH,
       myId: userDetails._id,
       authorId: displayPost.authorId,
@@ -83,7 +87,7 @@ export default function Post({ post, authorFollowers }) {
   }
 
   async function updateLike() {
-    var response = await axios.post(`${Url}/post/updateLike`, {
+    var response = await axios.post(`${url}/post/updateLike`, {
       tokenID: process.env.SECURITY_KEY_FOR_AUTH,
       id: displayPost._id,
       username: userDetails.username,
@@ -98,7 +102,7 @@ export default function Post({ post, authorFollowers }) {
       alert("Empty comments");
       return false;
     }
-    var response = await axios.post(`${Url}/post/Comment`, {
+    var response = await axios.post(`${url}/post/Comment`, {
       tokenID: process.env.SECURITY_KEY_FOR_AUTH,
       id: displayPost._id,
       username: userDetails.username,
@@ -110,8 +114,6 @@ export default function Post({ post, authorFollowers }) {
     setDisplayPost(response.data);
     setUserComment("");
   }
-
-  console.log(displayPost);
 
   return (
     <Layout title={displayPost.title}>
@@ -175,19 +177,17 @@ export default function Post({ post, authorFollowers }) {
       <div className="w-11/12 flex justify-center flex-col mb-20">
         <div className="w-full mt-2">
           <textarea
-            rows={5}
-            // value={userComment}
+            // rows={5}
+            value={userComment}
             className="text-black mt-1 px-2 py-1 w-full rounded focus:outline-none"
             placeholder="Add a comment... Ctrl+Enter to submit the comment"
+            onChange={(e) => handleComments(e.target.value)}
             // onKeyDown={(e) => {
             //   if (e.ctrlKey && e.key === "Enter") {
             //     submitUserComment();
             //   }
             // }}
-            onChange={(e) => {
-              console.log(e.target.value);
-            }}
-          ></textarea>
+          />
         </div>
         {displayPost.comments && (
           <div className="flex justify-center flex-col mt-5 w-full">

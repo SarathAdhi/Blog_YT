@@ -6,7 +6,9 @@ import Button from "../../common/components/elements/button.tsx";
 import Router from "next/router";
 import { P } from "../../common/components/elements/Text";
 import { Links } from "../../common/components/elements/links";
-import Url from "../../constants/url";
+import url from "../../common/constants/backendUrl";
+
+require("dotenv").config();
 
 export default function login() {
   useEffect(() => {
@@ -26,7 +28,7 @@ export default function login() {
       alert("Enter the Password");
     } else {
       await axios
-        .post(Url + "/login", {
+        .post(url + "/login", {
           email: userEmail,
           password: userPassword,
         })

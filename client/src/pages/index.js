@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Layout from "../common/layouts/Layout";
-import Url from "../constants/Url";
 import { RenderPosts } from "../common/components/RenderPosts";
+import url from "../common/constants/backendUrl";
 
 export async function getServerSideProps(context) {
-  const response = await fetch(`${Url}/getPosts`);
+  const response = await fetch(`${url}/getPosts`);
   const posts = await response.json();
   return {
     props: { posts },

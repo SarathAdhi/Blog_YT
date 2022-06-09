@@ -7,7 +7,7 @@ import { P } from "../../common/components/elements/Text";
 import Layout from "../../common/layouts/Layout";
 import { create } from "ipfs-http-client";
 import Router from "next/router";
-import Url from "../../constants/url";
+import url from "../../common/constants/backendUrl";
 
 const client = create("https://ipfs.infura.io:5001/api/v0");
 
@@ -41,7 +41,7 @@ export default function signup() {
     } else if (!userImage) {
       alert("Upload a Profile Pic !!");
     } else {
-      var request = await axios.post(Url + "/createUser", {
+      var request = await axios.post(url + "/createUser", {
         tokenID: process.env.SECURITY_KEY_FOR_AUTH,
         username: userName,
         email: userEmail,

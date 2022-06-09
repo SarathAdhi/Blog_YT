@@ -6,7 +6,8 @@ import axios from 'axios';
 import Button from '../../common/components/elements/button.tsx';
 import { create } from 'ipfs-http-client'
 import Router from 'next/router';
-import Url from '../../constants/Url'
+import url from '../../common/constants/backendUrl';
+
 
 require('dotenv').config()
 
@@ -67,7 +68,7 @@ export default function CreateBlog() {
             alert('Fill up the Tags !!');
         }
         else {
-            var request = await axios.post(`${Url}/createPost`, {
+            var request = await axios.post(`${url}/createPost`, {
                 tokenID: process.env.SECURITY_KEY_FOR_AUTH,
                 author: author,
                 authorId: authorId,

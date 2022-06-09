@@ -1,12 +1,12 @@
 import React from "react";
 import Layout from "../../common/layouts/Layout";
 import { RenderPosts } from "../../common/components/RenderPosts.js";
-import Url from "../../constants/Url";
 import { useRouter } from "next/router";
+import url from "../../common/constants/backendUrl";
 
 export async function getServerSideProps(context) {
   const { tag } = context.query;
-  const response = await fetch(`${Url}/post/tags/${tag}`);
+  const response = await fetch(`${url}/post/tags/${tag}`);
   const posts = await response.json();
   return {
     props: { posts },

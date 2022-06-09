@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Links } from "../../common/components/elements/links";
 import { Tags } from "../../common/components/elements/Tags";
 import Layout from "../../common/layouts/Layout";
-import Url from "../../constants/Url";
 import { Input } from "../../common/components/elements/inputField";
+import url from "../../common/constants/backendUrl";
 
 export async function getServerSideProps(context) {
-  const response = await fetch(`${Url}/post/tags`);
+  const response = await fetch(`${url}/post/tags`);
   const tags = await response.json();
   return {
     props: { tags },
