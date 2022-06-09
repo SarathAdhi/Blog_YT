@@ -3,7 +3,7 @@ import Layout from "../common/layouts/Layout";
 import { RenderPosts } from "../common/components/RenderPosts";
 import url from "../common/constants/backendUrl";
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   const response = await fetch(`${url}/getPosts`);
   const posts = await response.json();
   return {

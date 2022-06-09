@@ -5,7 +5,7 @@ import Layout from "../../common/layouts/Layout";
 import { Input } from "../../common/components/elements/inputField";
 import url from "../../common/constants/backendUrl";
 
-export async function getServerSideProps(context) {
+export async function getStaticProps (context) {
   const response = await fetch(`${url}/post/tags`);
   const tags = await response.json();
   return {

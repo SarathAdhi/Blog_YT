@@ -11,7 +11,7 @@ import url from "../../common/constants/backendUrl";
 
 require("dotenv").config();
 
-export async function getServerSideProps(context) {
+export async function getStaticProps (context) {
   const postId = context.query.id;
   const request = await fetch(`${url}/post/getPost`, {
     method: "POST",
