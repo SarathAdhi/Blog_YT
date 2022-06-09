@@ -7,7 +7,7 @@ import { P } from "../../common/components/elements/Text";
 import Layout from "../../common/layouts/Layout";
 import { create } from "ipfs-http-client";
 import Router from "next/router";
-import { Url } from "../../constants/url";
+import Url from "../../constants/url";
 
 const client = create("https://ipfs.infura.io:5001/api/v0");
 

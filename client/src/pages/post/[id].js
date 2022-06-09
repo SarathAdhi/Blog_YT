@@ -7,7 +7,7 @@ import axios from "axios";
 import Router from "next/router";
 import { Tags } from "../../common/components/elements/Tags";
 import { Links } from "../../common/components/elements/links";
-import Url from "../../constants/Url";
+import Url from "../../constants/url";
 
 require("dotenv").config();
 
